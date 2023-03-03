@@ -51,5 +51,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("ServerKT")
 }
