@@ -8,7 +8,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import user.initUserDB
+import user.UsersTable
 import user.users
 
 fun main(args: Array<String>) {
@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.mainModule() {
-    initUserDB()
+    UsersTable.init()
     install(ContentNegotiation) {
         json()
     }

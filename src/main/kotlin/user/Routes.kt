@@ -8,7 +8,6 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -26,14 +25,14 @@ fun Routing.users() {
             if (resultRow == null) {
                 call.respond(HttpStatusCode.NotFound)
             } else {
-                call.respond( toUser(resultRow) )
+                call.respond( User.fromResultRow(resultRow) )
             }
         }
         get {
             val users = transaction {
                 UsersTable
                     .selectAll()
-                    .map { toUser(it) }.toList()
+                    .map { User.fromResultRow(it) }.toList()
             }
             call.respond(users)
         }
@@ -41,9 +40,8 @@ fun Routing.users() {
         post {
             val parameters = call.receiveParameters()
             println(parameters.toString())
-            val name = requireNotNull(parameters["name"])
-            val email = requireNotNull(parameters["email"])
-            User(0, name, email).validate()
+            val name = requireNotNull(parameters["name"]). also { it.validateName() }
+            val email = requireNotNull(parameters["email"]). also { it.validateEmail() }
             transaction {
                 UsersTable.insert { user ->
                     user[UsersTable.name] = name
@@ -53,12 +51,4 @@ fun Routing.users() {
             call.respond(HttpStatusCode.Created)
         }
     }
-}
-
-private fun toUser(row: ResultRow) = with(row) {
-    User(
-        this[UsersTable.id].value,
-        this[UsersTable.name],
-        this[UsersTable.email],
-    )
 }
