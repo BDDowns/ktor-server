@@ -8,6 +8,8 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import user.initUserDB
+import user.users
 
 fun main(args: Array<String>) {
     embeddedServer(
@@ -18,6 +20,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.mainModule() {
+    initUserDB()
     install(ContentNegotiation) {
         json()
     }
@@ -25,5 +28,6 @@ fun Application.mainModule() {
         get("/status") {
             call.respond(mapOf("status" to "OK"))
         }
+        users()
     }
 }
