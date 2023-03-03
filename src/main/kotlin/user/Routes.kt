@@ -28,6 +28,7 @@ fun Routing.users() {
                 call.respond( User.fromResultRow(resultRow) )
             }
         }
+
         get {
             val users = transaction {
                 UsersTable
